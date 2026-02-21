@@ -1,0 +1,23 @@
+engine: slowhttptest
+pattern: steady
+period: 100
+duration: 150
+threads: 4
+connections: 200
+rate: 10
+amplitude: 0
+step: 5
+duration_threshold: 0.5
+duration_scale: 1.0
+slowhttptest_args:
+  - -H
+  - -c
+  - "500"
+  - -r
+  - "50"
+  - -l
+  - "60"
+  - -i
+  - "10"
+  - -p
+  - "3"

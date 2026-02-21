@@ -1,0 +1,153 @@
+nginx:
+  files:
+    main: /etc/nginx/nginx.conf
+    elastic_guard: /etc/nginx/conf.d/elastic-guard.conf
+  configs:
+    worker_connections:
+      directive: worker_connections
+      nginx_value: 4096
+      learner_value: 4096
+      min: 256
+      max: 8192
+      py_type: int
+      context: events
+      file: /etc/nginx/nginx.conf
+      description: Max simultaneous connections per worker process.
+    worker_processes:
+      directive: worker_processes
+      nginx_value: 2
+      learner_value: 2
+      min: 1
+      max: 8
+      py_type: int
+      context: main
+      file: /etc/nginx/nginx.conf
+      description: Number of worker processes handling requests.
+    worker_rlimit_nofile:
+      directive: worker_rlimit_nofile
+      nginx_value: 65535
+      learner_value: 65535
+      min: 1024
+      max: 200000
+      py_type: int
+      context: main
+      file: /etc/nginx/nginx.conf
+      description: Per-worker file descriptor limit to allow many connections.
+    keepalive_timeout:
+      directive: keepalive_timeout
+      nginx_value: 5s
+      learner_value: 5
+      min: 1
+      max: 120
+      py_type: int
+      format: '{value}s'
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Idle keepalive timeout before closing a connection.
+    client_body_timeout:
+      directive: client_body_timeout
+      nginx_value: 10s
+      learner_value: 10
+      min: 1
+      max: 120
+      py_type: int
+      format: '{value}s'
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Time allowed to read the client request body.
+    client_header_timeout:
+      directive: client_header_timeout
+      nginx_value: 5s
+      learner_value: 5
+      min: 1
+      max: 120
+      py_type: int
+      format: '{value}s'
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Time allowed to read client request headers.
+    send_timeout:
+      directive: send_timeout
+      nginx_value: 10s
+      learner_value: 10
+      min: 1
+      max: 120
+      py_type: int
+      format: '{value}s'
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Timeout for sending responses to the client.
+    keepalive_requests:
+      directive: keepalive_requests
+      nginx_value: 100
+      learner_value: 100
+      min: 100
+      max: 10000
+      py_type: int
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Max requests per keepalive connection before closing.
+    client_max_body_size:
+      directive: client_max_body_size
+      nginx_value: 20m
+      learner_value: 20
+      min: 10
+      max: 500
+      py_type: int
+      format: '{value}m'
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Maximum allowed client request body size.
+    reset_timedout_connection:
+      directive: reset_timedout_connection
+      nginx_value: 'on'
+      learner_value: 'on'
+      min: 0
+      max: 1
+      py_type: int
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Close timed-out connections without sending a response.
+    limit_conn_zone:
+      directive: limit_conn_zone
+      nginx_value: $binary_remote_addr zone=conn_limit:5m
+      min: 1
+      max: 1
+      py_type: int
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Shared memory zone for per-IP connection limiting.
+    limit_conn:
+      directive: limit_conn
+      nginx_value: conn_limit 100
+      learner_value: 100
+      min: 50
+      max: 20000
+      py_type: int
+      format: conn_limit {value}
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Limit concurrent connections per client IP.
+    limit_req_zone:
+      directive: limit_req_zone
+      nginx_value: $binary_remote_addr zone=req_limit:10m rate=500r/s
+      learner_value: 500
+      min: 200
+      max: 20000
+      py_type: int
+      format: $binary_remote_addr zone=req_limit:10m rate={value}r/s
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Shared memory zone for per-IP request rate limiting.
+    limit_req:
+      directive: limit_req
+      nginx_value: zone=req_limit burst=500 nodelay
+      learner_value: 500
+      min: 100
+      max: 20000
+      py_type: int
+      format: zone=req_limit burst={value} nodelay
+      context: http
+      file: /etc/nginx/conf.d/elastic-guard.conf
+      description: Enforce request rate limits with a burst allowance.
+  remove: {}

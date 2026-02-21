@@ -1,0 +1,9 @@
+engine: k6
+pattern: steady
+period: 30
+duration: 500
+threads: 10
+connections: 10
+rate: 20
+amplitude: 10
+step: 5
